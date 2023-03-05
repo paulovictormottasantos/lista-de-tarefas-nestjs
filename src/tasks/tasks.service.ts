@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Task } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateTaskDto } from './dtos/create-task.dto';
 import { UpdateTaskDto } from './dtos/update-task.dto';
@@ -7,7 +8,10 @@ import { UpdateTaskDto } from './dtos/update-task.dto';
 export class TasksService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async createTask(accountId: string, task: CreateTaskDto) {
+  async createTask(
+    accountId: string,
+    task: CreateTaskDto,
+  ): Promise<HttpException> {
     const foundAccount = await this.prismaService.account.findUnique({
       where: {
         id: accountId,
@@ -35,7 +39,7 @@ export class TasksService {
     throw new HttpException('Task successfully created.', HttpStatus.CREATED);
   }
 
-  async findTasks(accountId: string) {
+  async findTasks(accountId: string): Promise<Task[]> {
     const foundAccount = await this.prismaService.account.findUnique({
       where: {
         id: accountId,
@@ -55,7 +59,10 @@ export class TasksService {
     return foundTasks;
   }
 
-  async updateTask(taskId: string, task: UpdateTaskDto) {
+  async updateTask(
+    taskId: string,
+    task: UpdateTaskDto,
+  ): Promise<HttpException> {
     const foundTask = await this.prismaService.task.findUnique({
       where: {
         id: taskId,
@@ -86,7 +93,7 @@ export class TasksService {
     throw new HttpException('Task successfully updated.', HttpStatus.OK);
   }
 
-  async deleteTask(taskId: string) {
+  async deleteTask(taskId: string): Promise<HttpException> {
     const foundTask = await this.prismaService.task.findUnique({
       where: {
         id: taskId,
