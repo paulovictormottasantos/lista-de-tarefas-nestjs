@@ -6,7 +6,7 @@ import { CreateAccountDto } from './dtos/create-account.dto';
 export class AccountsService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async createAccount(account: CreateAccountDto) {
+  async createAccount(account: CreateAccountDto): Promise<HttpException> {
     const foundAccount = await this.prismaService.account.findUnique({
       where: {
         username: account.username,
