@@ -85,4 +85,31 @@ export class TasksService {
 
     throw new HttpException('Task successfully updated.', HttpStatus.OK);
   }
+
+  async deleteTask(taskId: string) {
+    const foundTask = await this.prismaService.task.findUnique({
+      where: {
+        id: taskId,
+      },
+    });
+
+    if (!foundTask) {
+      throw new HttpException('Task not found.', HttpStatus.NOT_FOUND);
+    }
+
+    const deletedTask = await this.prismaService.task.delete({
+      where: {
+        id: taskId,
+      },
+    });
+
+    if (!deletedTask) {
+      throw new HttpException(
+        'Task not deleted.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    throw new HttpException('Task successfully deleted.', HttpStatus.OK);
+  }
 }
