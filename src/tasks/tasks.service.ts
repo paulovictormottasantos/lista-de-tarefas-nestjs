@@ -33,4 +33,24 @@ export class TasksService {
 
     throw new HttpException('Task successfully created.', HttpStatus.CREATED);
   }
+
+  async findTasks(accountId: string) {
+    const foundAccount = await this.prismaService.account.findUnique({
+      where: {
+        id: accountId,
+      },
+    });
+
+    if (!foundAccount) {
+      throw new HttpException('Account not found.', HttpStatus.NOT_FOUND);
+    }
+
+    const foundTasks = await this.prismaService.task.findMany({
+      where: {
+        accountId,
+      },
+    });
+
+    return foundTasks;
+  }
 }

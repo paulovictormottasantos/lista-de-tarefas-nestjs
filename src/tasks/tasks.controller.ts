@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { CreateTaskDto } from './dtos/create-task.dto';
 import { TasksService } from './tasks.service';
 
@@ -12,5 +12,10 @@ export class TasksController {
     @Body() task: CreateTaskDto,
   ) {
     return await this.tasksService.createTask(accountId, task);
+  }
+
+  @Get('/find/:accountId')
+  async findTasks(@Param('accountId') accountId: string) {
+    return await this.tasksService.findTasks(accountId);
   }
 }
