@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateTaskDto } from './dtos/create-task.dto';
+import { UpdateTaskDto } from './dtos/update-task.dto';
 
 @Injectable()
 export class TasksService {
@@ -52,5 +53,36 @@ export class TasksService {
     });
 
     return foundTasks;
+  }
+
+  async updateTask(taskId: string, task: UpdateTaskDto) {
+    const foundTask = await this.prismaService.task.findUnique({
+      where: {
+        id: taskId,
+      },
+    });
+
+    if (!foundTask) {
+      throw new HttpException('Task not found.', HttpStatus.NOT_FOUND);
+    }
+
+    const updatedTask = await this.prismaService.task.update({
+      where: {
+        id: taskId,
+      },
+      data: {
+        content: task.content,
+        finished: task.finished,
+      },
+    });
+
+    if (!updatedTask) {
+      throw new HttpException(
+        'Task not updated.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    throw new HttpException('Task successfully updated.', HttpStatus.OK);
   }
 }
